@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.listenergao.kotlincoroutines.activity.OneActivity
+import com.listenergao.kotlincoroutines.activity.ThreeActivity
 import com.listenergao.kotlincoroutines.activity.TwoActivity
 import com.listenergao.kotlincoroutines.databinding.ActivityMainBinding
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setViewsClickListener() {
         mBinding.buttonOne.setOnClickListener(this)
         mBinding.buttonTwo.setOnClickListener(this)
+        mBinding.buttonThree.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -38,6 +40,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.button_two -> {
                 intent = Intent(this, TwoActivity::class.java)
+            }
+            R.id.button_three -> {
+                intent = Intent(this, ThreeActivity::class.java)
             }
         }
 
