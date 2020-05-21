@@ -3,10 +3,13 @@ package com.listenergao.kotlincoroutines.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.listenergao.kotlincoroutines.Api
 import com.listenergao.kotlincoroutines.R
+import com.listenergao.kotlincoroutines.arch.ThreeViewModel
 import com.listenergao.kotlincoroutines.databinding.ActivityThreeBinding
 import com.listenergao.kotlincoroutines.model.Repo
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
@@ -30,6 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ThreeActivity : AppCompatActivity(), View.OnClickListener {
     private val TAG = "ThreeActivity"
     private lateinit var mBinding: ActivityThreeBinding
+    private val mModel: ThreeViewModel by viewModels()
 
     private lateinit var mApi: Api
     private val mCompositeDisposable = CompositeDisposable()
@@ -39,17 +43,24 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
         mBinding = ActivityThreeBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
+        initRetrofit()
+
+        setViewClickListener()
+
+        //启动Activity时，会直接请求接口，github连接不上时，会出现崩溃
+        mModel.repos.observe(this, Observer {
+            Log.d(TAG, "repo name:${it?.get(0)?.name}")
+        })
+
+    }
+
+    private fun initRetrofit() {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         mApi = retrofit.create(Api::class.java)
-
-
-        setViewClickListener()
-
-
     }
 
     private fun setViewClickListener() {
