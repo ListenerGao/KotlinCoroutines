@@ -20,11 +20,11 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.concurrent.thread
+import kotlin.system.measureTimeMillis
 
 /**
  * @author ListenerGao
@@ -51,6 +51,17 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
         mModel.repos.observe(this, Observer {
             Log.d(TAG, "repo name:${it?.get(0)?.name}")
         })
+
+        thread {
+            Thread.sleep(1000)
+
+        }
+
+        runBlocking {
+
+        }
+
+        test()
 
     }
 
@@ -120,6 +131,43 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
             val same = one.await()?.get(0)?.name ?: "null" == two.await()?.get(0)?.name ?: ""
             Log.d(TAG, "kotlin Coroutine same:$same")
         }
+    }
+
+
+    private suspend fun concurrentSum(): Int = coroutineScope {
+        3
+    }
+
+
+    /**
+     * 模拟进入页面 10s 后开始轮询网络
+     */
+    private fun test() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(10 * 1000)
+            loopNetwork()
+        }
+
+        //计算耗时
+        measureTimeMillis {
+
+        }
+    }
+
+    /**
+     * 模拟轮询网络
+     * 每 5s 轮询一次
+     */
+    private suspend fun loopNetwork() {
+        var start = 0
+        withContext(Dispatchers.IO) {
+            while (isActive) {
+                Log.d(TAG, "test2......${Thread.currentThread().name}")
+                start++
+                delay(5 * 1000)
+            }
+        }
+
     }
 
 
