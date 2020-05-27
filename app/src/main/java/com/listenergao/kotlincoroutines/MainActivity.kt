@@ -3,10 +3,7 @@ package com.listenergao.kotlincoroutines
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import com.listenergao.kotlincoroutines.activity.AsyncFlowActivity
-import com.listenergao.kotlincoroutines.activity.OneActivity
-import com.listenergao.kotlincoroutines.activity.ThreeActivity
-import com.listenergao.kotlincoroutines.activity.TwoActivity
+import com.listenergao.kotlincoroutines.activity.*
 import com.listenergao.kotlincoroutines.databinding.ActivityMainBinding
 
 /**
@@ -31,6 +28,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         mBinding.buttonTwo.setOnClickListener(this)
         mBinding.buttonThree.setOnClickListener(this)
         mBinding.buttonFour.setOnClickListener(this)
+        mBinding.buttonFive.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -47,6 +45,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             }
             R.id.button_four -> {
                 intent = Intent(this, AsyncFlowActivity::class.java)
+            }
+            R.id.button_five -> {
+                intent = Intent(this, TestRecyclerViewActivity::class.java)
             }
         }
 
