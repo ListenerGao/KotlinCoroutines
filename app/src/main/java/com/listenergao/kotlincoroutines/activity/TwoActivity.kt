@@ -14,6 +14,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +27,9 @@ class TwoActivity : AppCompatActivity(), View.OnClickListener {
 
     private val TAG = "TwoActivity"
     private lateinit var mBinding: ActivityTwoBinding
+
+    //创建主线程运行的协程
+    private val scope = MainScope()
 
     private lateinit var mApi: Api
 
@@ -120,8 +125,25 @@ class TwoActivity : AppCompatActivity(), View.OnClickListener {
     private fun retrofitWithKotlin() {
         //使用 lifecycleScope 避免协程内存泄漏
         lifecycleScope.launch {
-            val listReposKt = mApi.listReposKt("listenergao")
-            mBinding.retrofitContent.text = listReposKt?.get(2)?.name
+            try {
+                val listReposKt = mApi.listReposKt("listenergao") //后台
+                mBinding.retrofitContent.text = listReposKt?.get(2)?.name //前台
+            } catch (e: Exception) {
+                //处理异常
+            }
+
         }
+        //或者使用MainScope，但需要在页面结束时，调用cancel方法
+        //scope可以多次启动协程
+//        scope.launch {
+//            val listReposKt = mApi.listReposKt("listenergao") //后台
+//            mBinding.retrofitContent.text = listReposKt?.get(2)?.name //前台
+//        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //取消scope开启的所有协程
+        scope.cancel()
     }
 }

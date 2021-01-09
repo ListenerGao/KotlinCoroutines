@@ -63,6 +63,11 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
 
         test()
 
+        //指定协程启动的时段
+        lifecycleScope.launchWhenCreated { }
+        lifecycleScope.launchWhenResumed { }
+        lifecycleScope.launchWhenStarted { }
+
     }
 
     private fun initRetrofit() {

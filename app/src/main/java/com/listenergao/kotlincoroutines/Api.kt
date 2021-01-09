@@ -11,6 +11,7 @@ interface Api {
     @GET("users/{user}/repos")
     fun listRepos(@Path("user") user: String): Call<List<Repo>>
 
+    //该函数自动在后台执行，Retrofit 从2.6.X版本之后，已支持协程
     @GET("users/{user}/repos")
     suspend fun listReposKt(@Path("user") user: String): List<Repo>?
 

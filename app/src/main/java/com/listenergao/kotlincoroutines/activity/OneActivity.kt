@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.listenergao.kotlincoroutines.databinding.ActivityOneBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -16,6 +13,8 @@ import kotlin.concurrent.thread
 class OneActivity : AppCompatActivity() {
 
     private lateinit var mBinding: ActivityOneBinding
+    private var jobOne: Job? = null
+    private var jobTwo: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +41,7 @@ class OneActivity : AppCompatActivity() {
 
     private fun getCurrentThreadName() {
 
-        GlobalScope.launch {
+        jobOne = GlobalScope.launch {
             println("kotlin coroutines 1 ${Thread.currentThread().name}")
         }
 
@@ -60,7 +59,7 @@ class OneActivity : AppCompatActivity() {
     }
 
     private fun testCoroutines() {
-        GlobalScope.launch(Dispatchers.Main) {
+        jobTwo = GlobalScope.launch(Dispatchers.Main) {
             ioCode1()
             uiCode1()
             ioCode2()
@@ -127,5 +126,12 @@ class OneActivity : AppCompatActivity() {
                 block()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //取消协程
+        jobOne?.cancel()
+        jobTwo?.cancel()
     }
 }
