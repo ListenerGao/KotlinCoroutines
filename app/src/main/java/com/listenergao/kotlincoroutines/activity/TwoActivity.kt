@@ -125,12 +125,24 @@ class TwoActivity : AppCompatActivity(), View.OnClickListener {
     private fun retrofitWithKotlin() {
         //使用 lifecycleScope 避免协程内存泄漏
         lifecycleScope.launch {
-            try {
-                val listReposKt = mApi.listReposKt("listenergao") //后台
-                mBinding.retrofitContent.text = listReposKt?.get(2)?.name //前台
-            } catch (e: Exception) {
-                //处理异常
+            runCatching {
+                Log.d(TAG, "catch current thread name:${Thread.currentThread().name}")
+                // retrofit 会将此放在子线程中
+                mApi.listReposKt("listenergao")
+            }.onSuccess {
+                Log.d(TAG, "success current thread name:${Thread.currentThread().name}")
+
+                mBinding.retrofitContent.text = it?.get(2)?.name
+            }.onFailure {
+                Log.d(TAG, "fail current thread name:${Thread.currentThread().name}")
+                mBinding.retrofitContent.text = it.message
             }
+//            try {
+//                val listReposKt = mApi.listReposKt("listenergao") //后台
+//                mBinding.retrofitContent.text = listReposKt?.get(2)?.name //前台
+//            } catch (e: Exception) {
+//                //处理异常
+//            }
 
         }
         //或者使用MainScope，但需要在页面结束时，调用cancel方法

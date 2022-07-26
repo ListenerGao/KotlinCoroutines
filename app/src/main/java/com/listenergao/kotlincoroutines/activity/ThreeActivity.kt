@@ -68,6 +68,39 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
         lifecycleScope.launchWhenResumed { }
         lifecycleScope.launchWhenStarted { }
 
+
+        lifecycleScope.launch {
+            // 假设有这样一个需求，有两个 A，B 挂起函数，分别的不同的协程中执行，
+            // 我们需要等 A，B 函数执行完之后，再执行 C 函数，可以这样写：
+            coroutineScope {
+                launch {
+                    testA()
+                }
+                launch {
+                    testB()
+                }
+            }
+            testC()
+        }
+
+    }
+
+    private suspend fun testA() {
+        withContext(Dispatchers.IO) {
+            Thread.sleep(3000)
+            Log.d(TAG, "testA...." + Thread.currentThread().name)
+        }
+    }
+
+    private suspend fun testB() {
+        withContext(Dispatchers.IO) {
+            delay(5000)
+            Log.d(TAG, "testB...." + Thread.currentThread().name)
+        }
+    }
+
+    private fun testC() {
+        Log.d(TAG, "testC...." + Thread.currentThread().name)
     }
 
     private fun initRetrofit() {
@@ -130,10 +163,18 @@ class ThreeActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun multipleNetworksWithCoroutine() {
         lifecycleScope.launch(Dispatchers.Main) {
-            val one = async { mApi.listReposKt("listenergao") }
-            val two = async { mApi.listReposKt("listenergao") }
+            val one = async {
+                Log.d(TAG, "async one:${Thread.currentThread().name}")
+                mApi.listReposKt("listenergao")
+            }
+            val two = async {
+                Log.d(TAG, "async two:${Thread.currentThread().name}")
+                mApi.listReposKt("listenergao")
+            }
 
-            val same = one.await()?.get(0)?.name ?: "null" == two.await()?.get(0)?.name ?: ""
+            val same = (one.await()?.get(0)?.name ?: "null") == (two.await()?.get(0)?.name ?: "")
+            Log.d(TAG, "launch:${Thread.currentThread().name}")
+
             Log.d(TAG, "kotlin Coroutine same:$same")
         }
     }

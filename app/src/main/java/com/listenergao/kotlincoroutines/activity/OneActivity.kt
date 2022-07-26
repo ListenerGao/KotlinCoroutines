@@ -3,6 +3,7 @@ package com.listenergao.kotlincoroutines.activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.listenergao.kotlincoroutines.databinding.ActivityOneBinding
 import kotlinx.coroutines.*
 import java.util.concurrent.LinkedBlockingQueue
@@ -35,6 +36,10 @@ class OneActivity : AppCompatActivity() {
 //        classicIoCode(true, {})
 //        (::classicIoCode)(true, {})
 //        (::classicIoCode).invoke(true, {})
+
+        val job:Job = lifecycleScope.launch{
+
+        }
 
     }
 
@@ -81,14 +86,14 @@ class OneActivity : AppCompatActivity() {
     private suspend fun ioCode1() {
         //指定线程
         withContext(Dispatchers.IO) {
-            Thread.sleep(1000)
+            Thread.sleep(3000)
             println("kotlin coroutines io1 ${Thread.currentThread().name}")
         }
     }
 
     private suspend fun ioCode2() {
         withContext(Dispatchers.IO) {
-            Thread.sleep(1000)
+            Thread.sleep(2000)
             println("kotlin coroutines io2 ${Thread.currentThread().name}")
         }
     }
