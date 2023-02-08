@@ -30,7 +30,7 @@ class GallerySnapHelper : SnapHelper() {
     /**
      * 处理列表滑动速度
      */
-    override fun createScroller(layoutManager: RecyclerView.LayoutManager?): RecyclerView.SmoothScroller? {
+    override fun createScroller(layoutManager: RecyclerView.LayoutManager): RecyclerView.SmoothScroller? {
         if (layoutManager !is RecyclerView.SmoothScroller.ScrollVectorProvider) {
             return null
         }
